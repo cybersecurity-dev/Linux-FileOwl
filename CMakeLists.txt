@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Linux-FileOwl VERSION 1.0)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 21)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Find pthread library
