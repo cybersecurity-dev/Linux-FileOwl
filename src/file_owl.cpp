@@ -13,6 +13,7 @@ void add_watch(int fd, const std::string& path) {
         perror("inotify_add_watch");
         return;
     }
+    
 
     // Open the directory and iterate through its entries
     DIR* dir = opendir(path.c_str());
@@ -39,8 +40,12 @@ void add_watch(int fd, const std::string& path) {
     closedir(dir);
 }
 
-int main() {
-    const std::string directory_to_watch = "/home/dir/owl/";  // Change this to your target directory
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <directory_to_watch>" << std::endl;
+        return EXIT_FAILURE;
+    }
+    const std::string directory_to_watch = argv[1];  // Get the directory to watch from command-line argument
 
     // Create an inotify instance
     int fd = inotify_init();
