@@ -12,12 +12,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(Threads REQUIRED)
 
 # Add the executable, including the source files from the src/ directory
-add_executable(file_monitor_daemon 
+add_executable(Linux-FileOwl 
     src/file_owl.cpp
 )
 
 # Link the pthread library
-target_link_libraries(file_monitor_daemon Threads::Threads)
+target_link_libraries(Linux-FileOwl Threads::Threads)
 
 # Optionally, set install rules if needed
 install(TARGETS Linux-FileOwl DESTINATION /usr/local/bin)
