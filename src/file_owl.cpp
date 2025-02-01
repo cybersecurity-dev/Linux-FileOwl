@@ -1,9 +1,20 @@
 #include <iostream>
 #include <string>
+#include <thread>
+#include <mutex>
+#include <vector>
+#include <fstream>
+
 #include <unistd.h>
 #include <sys/inotify.h>
 #include <limits.h>
 #include <dirent.h>
+
+// Mutex for thread safety
+std::mutex mtx;
+
+// Buffer to store events temporarily
+std::vector<std::string> eventBuffer;
 
 // Function to add a watch recursively
 void add_watch(int fd, const std::string& path) {
@@ -13,7 +24,6 @@ void add_watch(int fd, const std::string& path) {
         perror("inotify_add_watch");
         return;
     }
-    
 
     // Open the directory and iterate through its entries
     DIR* dir = opendir(path.c_str());
@@ -40,12 +50,45 @@ void add_watch(int fd, const std::string& path) {
     closedir(dir);
 }
 
+// Function to write buffered events to CSV file
+void write_to_csv(const std::string& csv_file) {
+    std::lock_guard<std::mutex> lock(mtx);
+
+    if (eventBuffer.empty()) {
+        return;
+    }
+
+
+
+    std::ofstream ofs(csv_file, std::ios_base::app);  // Append mode
+    if (!ofs.is_open()) {
+        std::cerr << "Failed to open CSV file: " << csv_file << std::endl;
+        return;
+    }
+
+    for (const auto& event : eventBuffer) {
+        ofs << event << std::endl;
+    }
+
+    ofs.close();
+    eventBuffer.clear();  // Clear the buffer after writing
+}
+
+// Function to periodically flush the buffer to CSV
+void periodic_flush(const std::string& csv_file) {
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::minutes(1));  // Wait for one minute
+        write_to_csv(csv_file);
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <directory_to_watch>" << std::endl;
         return EXIT_FAILURE;
     }
     const std::string directory_to_watch = argv[1];  // Get the directory to watch from command-line argument
+    const std::string csv_file = "file_operations.csv";
 
     // Create an inotify instance
     int fd = inotify_init();
@@ -56,6 +99,9 @@ int main(int argc, char* argv[]) {
 
     // Add watches recursively
     add_watch(fd, directory_to_watch);
+
+    // Start the periodic flush thread
+    std::thread flush_thread(periodic_flush, csv_file);
 
     // Buffer to store inotify events
     char buffer[4096] __attribute__ ((aligned(__alignof__(struct inotify_event))));
@@ -70,19 +116,34 @@ int main(int argc, char* argv[]) {
             struct inotify_event* event = reinterpret_cast<struct inotify_event*>(ptr);
 
             std::string event_name = (event->len > 0) ? event->name : "unknown";
-            std::cout << "Event: ";
+            std::string event_desc;
+
+            // Get the current timestamp
+            time_t now = time(nullptr);
+            char timestamp[20];
+            strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", localtime(&now));
+
+            event_desc = timestamp;
+            event_desc += ", ";
+
             if (event->mask & IN_CREATE) {
-                std::cout << "CREATE";
+                event_desc += "CREATE";
             } else if (event->mask & IN_DELETE) {
-                std::cout << "DELETE";
+                event_desc += "DELETE";
             } else if (event->mask & IN_MODIFY) {
-                std::cout << "MODIFY";
+                event_desc += "MODIFY";
             } else if (event->mask & IN_MOVED_FROM || event->mask & IN_MOVED_TO) {
-                std::cout << "MOVE";
+                event_desc += "MOVE";
             } else {
-                std::cout << "UNKNOWN";
+                event_desc += "UNKNOWN";
             }
-            std::cout << " on " << event_name << std::endl;
+
+            event_desc += ", ";
+            event_desc += event_name;
+
+            // Lock the mutex and add the event to the buffer
+            std::lock_guard<std::mutex> lock(mtx);
+            eventBuffer.push_back(event_desc);
 
             ptr += sizeof(struct inotify_event) + event->len;
         }
@@ -90,5 +151,7 @@ int main(int argc, char* argv[]) {
 
     // Clean up
     close(fd);
+    flush_thread.join();  // Ensure the flush thread is finished before exiting
+
     return EXIT_SUCCESS;
 }
