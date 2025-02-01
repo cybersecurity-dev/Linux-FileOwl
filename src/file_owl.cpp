@@ -58,8 +58,6 @@ void write_to_csv(const std::string& csv_file) {
         return;
     }
 
-
-
     std::ofstream ofs(csv_file, std::ios_base::app);  // Append mode
     if (!ofs.is_open()) {
         std::cerr << "Failed to open CSV file: " << csv_file << std::endl;
@@ -83,12 +81,12 @@ void periodic_flush(const std::string& csv_file) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <directory_to_watch>" << std::endl;
+    if (argc < 3) {
+        std::cerr << "Usage: " << argv[0] << " <directory_to_watch>" << " <CSV file to save>" << std::endl;
         return EXIT_FAILURE;
     }
-    const std::string directory_to_watch = argv[1];  // Get the directory to watch from command-line argument
-    const std::string csv_file = "file_operations.csv";
+    const std::string directory_to_watch = argv[1];
+    const std::string csv_file = argv[2];
 
     // Create an inotify instance
     int fd = inotify_init();
