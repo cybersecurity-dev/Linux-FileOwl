@@ -1,11 +1,9 @@
 # Linux-FileOwl
 Linux kernel subsystem that monitors file system events. It can be used to detect when files are created, modified, or deleted
 
-# Linux File System
-
 ```mermaid
   graph TD
-      subgraph Linux File System
+      subgraph "Linux File System Hierarchy"
           Root(/) --> bin[bin: Essential command binaries]
           Root(/) --> boot[boot: System boot loader files]
           Root(/) --> dev[dev: Device files]
@@ -24,5 +22,5 @@ Linux kernel subsystem that monitors file system events. It can be used to detec
           Root(/) --> tmp[tmp: Temporary files]
           Root(/) --> usr[usr: Unix System Resources]
           Root(/) --> var[var: File that is expected to continuously change]
-      end
+    end
 ```
