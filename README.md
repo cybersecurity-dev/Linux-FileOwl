@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="https://en.wikibooks.org/wiki/The_Linux_Kernel/Syscalls">
+      <img width="15%" src="https://github.com/cybersecurity-dev/cybersecurity-dev/blob/main/assets/Tux.svg" />
+    </a>
+</p>
+
 # Linux-FileOwl
 Linux kernel subsystem that monitors file system events. It can be used to detect when files are created, modified, or deleted
 
