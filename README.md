@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://en.wikibooks.org/wiki/The_Linux_Kernel/Syscalls">
-      <img width="15%" src="https://github.com/cybersecurity-dev/cybersecurity-dev/blob/main/assets/Tux.svg" />
+      <img width="8%" src="https://github.com/cybersecurity-dev/cybersecurity-dev/blob/main/assets/Tux.svg" />
     </a>
 </p>
 
@@ -65,9 +65,6 @@ flowchart LR
     <img src="https://github.com/cybersecurity-dev/cybersecurity-dev/blob/main/assets/bar.gif">
 </p>
 
-<details>
-<summary>Linux File System Hierarchy</summary>
-
 ```mermaid
   graph TD
       subgraph "Linux File System Hierarchy"
@@ -91,9 +88,44 @@ flowchart LR
           Root(/) --> var[var: File that is expected to continuously change]
     end
 ```
+## 📖 Contents
+- [My Awesome Lists](#my-awesome-lists)
+- [Contributing](#contributing)
+- [Contributors](#contributors)
+
+## Installation Steps
+
+<details>
+<summary>Linux File System Hierarchy</summary>
+
+
 </details>
 
+## Common Inotify Event Types
+
+| Event Type | Syntax | Description |
+|---|---|---|
+| File created | `IN_CREATE` | A file or directory is created inside the monitored directory. |
+| File modified | `IN_MODIFY` | The contents of a monitored file are modified. |
+| Write completed | `IN_CLOSE_WRITE` | A file opened for writing is closed. Recommended for triggering file scanning or hashing. |
+| Read completed | `IN_CLOSE_NOWRITE` | A file opened without write access is closed. |
+| File opened | `IN_OPEN` | A monitored file or directory is opened. |
+| File accessed | `IN_ACCESS` | A monitored file is accessed or read. |
+| File deleted | `IN_DELETE` | A file or directory is deleted from the monitored directory. |
+| Monitored object deleted | `IN_DELETE_SELF` | The monitored file or directory itself is deleted. |
+| File moved out | `IN_MOVED_FROM` | A file or directory is moved out of the monitored directory. |
+| File moved in | `IN_MOVED_TO` | A file or directory is moved into the monitored directory. |
+| Monitored object moved | `IN_MOVE_SELF` | The monitored file or directory itself is moved. |
+| Metadata changed | `IN_ATTRIB` | File metadata changes, such as permissions, ownership, or timestamps. |
+| Watch removed | `IN_IGNORED` | The inotify watch is removed automatically or explicitly. |
+| File system unmounted | `IN_UNMOUNT` | The file system containing the monitored object is unmounted. |
+| Event queue overflow | `IN_Q_OVERFLOW` | The inotify event queue overflows, which means events may have been lost. |
+| Directory indicator | `IN_ISDIR` | An additional flag indicating that the affected object is a directory. |
+
 ##
+
+### My Awesome Lists
+You can access the my awesome lists [here](https://cyberthreatdefence.com/my_awesome_lists)
 
 ### Contributing
 
